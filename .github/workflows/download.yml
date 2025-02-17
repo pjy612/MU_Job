@@ -1,0 +1,55 @@
+name: Manifest Download
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+
+  workflow_dispatch:
+
+concurrency:
+  group: download
+  cancel-in-progress: true
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.1
+        with:
+          submodules: recursive
+          repository: pjy612/MU
+          fetch-depth: 1
+          token: ${{ secrets.TOKEN }}
+
+      - name: Run Git commands
+        run: |
+          git config --local user.name github-actions[bot]
+          git config --local user.email github-actions[bot]@github.com
+          git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
+          git fetch --depth 1 --tags manifest
+        
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          cache: true
+
+      - name: Restore previous build
+        uses: actions/cache@v4
+        id: binaries
+        with:
+          path: |
+            bin/
+            obj/
+          key: ${{ runner.os }}-bin-${{ github.sha }}
+
+      - name: Build manifest downloader
+        if: steps.binaries.outputs.cache-hit != 'true'
+        run: dotnet build --configuration Release
+
+      - name: Download manifest
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+        run: dotnet run --no-build --configuration Release
+
