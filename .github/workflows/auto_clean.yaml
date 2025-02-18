@@ -64,8 +64,8 @@ jobs:
 
             if [[ "$workflow_path" != ".github/workflows/auto_clean.yaml" ]]; then
               # 删除手动取消的记录
-              if [[ "$status" == "completed" && "$conclusion" == "cancelled" ]]; then
-                echo "Deleting cancelled run: $run_id"
+              if [[ "$status" == "completed" && "$conclusion" != "success" ]]; then
+                echo "Deleting not success run: $run_id"
                 curl -s -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" \
                   "https://api.github.com/repos/${{ github.repository }}/actions/runs/$run_id"
               fi
