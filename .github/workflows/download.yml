@@ -13,6 +13,8 @@ concurrency:
 jobs:
   download:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
     steps:
       - name: Checkout MU repository
         uses: actions/checkout@v4.1.1
