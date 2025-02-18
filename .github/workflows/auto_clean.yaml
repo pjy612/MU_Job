@@ -1,17 +1,35 @@
-name: 'workflows日志自动清理'
+name: Cleanup Workflow Runs
 
 on:
   schedule:
-    - cron: '0 0 */1 * *'
-    
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # 每天午夜运行
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
-  del_workflow:
+  cleanup:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Delete workflow runs
-        uses: GitRML/delete-workflow-runs@main
-        with:
-          keep_minimum_runs: 6
-          retain_days: 1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Delete old workflow runs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用默认的 GITHUB_TOKEN
+        run: |
+          # 获取工作流 ID
+          WORKFLOW_ID=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows" \
+            | jq -r '.workflows[] | select(.path == ".github/workflows/your-workflow-file.yml") | .id')
+
+          # 获取超过 7 天的运行记录
+          RUN_IDS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$WORKFLOW_ID/runs?per_page=100" \
+            | jq -r '.workflow_runs[] | select((.updated_at | fromdateiso8601) < (now - 21600)) | .id')
+
+          # 删除旧的运行记录
+          for RUN_ID in $RUN_IDS; do
+            curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/runs/$RUN_ID"
+            echo "Deleted run $RUN_ID"
+          done
