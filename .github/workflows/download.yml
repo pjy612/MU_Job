@@ -20,7 +20,7 @@ jobs:
       TZ: Asia/Shanghai
     steps:
       - name: Checkout MU repository
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.2
         with:
           submodules: recursive
           repository: pjy612/MU
@@ -43,9 +43,9 @@ jobs:
           git config --local user.email github-actions[bot]@github.com
           
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v4.3.0
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.x
           cache: true
 
       - name: Restore previous build
