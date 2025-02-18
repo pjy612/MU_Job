@@ -3,6 +3,7 @@ name: 'workflows日志自动清理'
 on:
   schedule:
     - cron: '0 */1 * * *'
+    
   workflow_dispatch:
 
 jobs:
@@ -12,4 +13,5 @@ jobs:
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
         with:
-          keep_minimum_runs: 5
+          keep_minimum_runs: 6
+          retain_days: 1
