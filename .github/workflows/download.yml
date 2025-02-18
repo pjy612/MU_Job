@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: download
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   download:
@@ -23,15 +23,20 @@ jobs:
           repository: pjy612/MU
           fetch-depth: 0
           token: ${{ secrets.TOKEN }}
-
-      - name: Run Git commands
+      - name: Fetch Manifest Repo
+        run: |
+          git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
+          git fetch --depth 1 --tags manifest
+          
+      - name: Fetch Repo
+        run: |
+          git fetch origin
+          
+      - name: Set Git Author
         run: |
           git config --local user.name github-actions[bot]
           git config --local user.email github-actions[bot]@github.com
-          git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
-          git fetch --depth 1 --tags manifest
-          git fetch origin
-        
+          
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
