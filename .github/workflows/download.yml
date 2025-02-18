@@ -1,4 +1,4 @@
-name: Manifest Download
+name: Update Manifest
 
 on:
   schedule:
