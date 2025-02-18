@@ -59,10 +59,10 @@ jobs:
 
       - name: Build manifest downloader
         if: steps.binaries.outputs.cache-hit != 'true'
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release /clp:ErrorsOnly
 
       - name: Download manifest
         env:
           TOKEN: ${{ secrets.TOKEN }}
-        run: dotnet run --no-build --configuration Release
+        run: dotnet run --no-build --configuration Release /clp:ErrorsOnly
 
