@@ -22,10 +22,10 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows" \
             | jq -r '.workflows[] | select(.path == ".github/workflows/your-workflow-file.yml") | .id')
 
-          # 获取超过 7 天的运行记录
+          # 获取超过 6 小时 的运行记录
           RUN_IDS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$WORKFLOW_ID/runs?per_page=100" \
-            | jq -r '.workflow_runs[] | select((.updated_at | fromdateiso8601) < (now - 21600)) | .id')
+            | jq -r --arg now "$(date +%s)" '.workflow_runs[] | select((.updated_at | fromdateiso8601 | mktime) < ($now | tonumber - 604800)) | .id')
 
           # 删除旧的运行记录
           for RUN_ID in $RUN_IDS; do
