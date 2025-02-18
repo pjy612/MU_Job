@@ -19,7 +19,7 @@ jobs:
         with:
           submodules: recursive
           repository: pjy612/MU
-          fetch-depth: 1
+          fetch-depth: 0
           token: ${{ secrets.TOKEN }}
 
       - name: Run Git commands
