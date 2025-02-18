@@ -29,7 +29,6 @@ jobs:
           git fetch --depth 1 --tags manifest
       - name: Fetch Manifest Repo Again
         run: |
-          git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
           git fetch --tags manifest
       - name: Fetch Repo
         run: |
