@@ -26,8 +26,8 @@ jobs:
         run: |
           git config --local user.name github-actions[bot]
           git config --local user.email github-actions[bot]@github.com
-          # git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
-          # git fetch --depth 1 --tags manifest
+          git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
+          git fetch --depth 1 --tags manifest
         
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
