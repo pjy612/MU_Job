@@ -26,6 +26,12 @@ jobs:
           repository: pjy612/MU
           fetch-depth: 0
           token: ${{ secrets.TOKEN }}
+          
+      - name: Get MU repository latest commit SHA
+        run: |
+          echo "MU_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "The MU repository latest SHA is $MU_SHA"
+          
       - name: Fetch Manifest Repo
         run: |
           git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
@@ -55,7 +61,7 @@ jobs:
           path: |
             bin/
             obj/
-          key: ${{ runner.os }}-bin-${{ github.sha }}
+          key: ${{ runner.os }}-bin-${{ env.MU_SHA }}
 
       - name: Build manifest downloader
         if: steps.binaries.outputs.cache-hit != 'true'
