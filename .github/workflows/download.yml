@@ -37,6 +37,7 @@ jobs:
         run: |
           echo "The MU repository latest SHA is ${{ env.MU_SHA }}"
           echo "Git SHA is ${{ steps.git_sha.outputs.sha }}"
+          echo "GitHub sha is ${{ github.sha }}"
         
       - name: Fetch Manifest Repo
         run: |
