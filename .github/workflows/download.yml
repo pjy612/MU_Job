@@ -32,10 +32,10 @@ jobs:
           git fetch --depth 1 --tags manifest
       - name: Fetch Manifest Repo Again
         run: |
-          git fetch --tags manifest
+          git fetch --tags manifest -f
       - name: Fetch Repo
         run: |
-          git fetch origin
+          git fetch origin -f
           
       - name: Set Git Author
         run: |
