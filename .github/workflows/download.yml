@@ -29,10 +29,14 @@ jobs:
           
       - name: Get Git SHA
         id: git_sha
-        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          echo "MU_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Print Git SHA
-        run: echo "Git SHA is ${{ steps.git_sha.outputs.sha }}"
+        run: |
+          echo "The MU repository latest SHA is ${{ env.MU_SHA }}"
+          echo "Git SHA is ${{ steps.git_sha.outputs.sha }}"
         
       - name: Fetch Manifest Repo
         run: |
