@@ -30,7 +30,7 @@ jobs:
       - name: Get MU repository latest commit SHA
         run: |
           echo "MU_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-          echo "The MU repository latest SHA is $MU_SHA"
+          echo "The MU repository latest SHA is ${{ env.MU_SHA }}"
           
       - name: Fetch Manifest Repo
         run: |
