@@ -27,25 +27,21 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.TOKEN }}
           
-      - name: Get Git SHA
-        id: git_sha
+      - name: Get MU Git SHA
         run: |
           echo "MU_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Print Git SHA
         run: |
           echo "The MU repository latest SHA is ${{ env.MU_SHA }}"
-          echo "Git SHA is ${{ steps.git_sha.outputs.sha }}"
-          echo "GitHub sha is ${{ github.sha }}"
         
       - name: Fetch Manifest Repo
         run: |
-          #git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
-          #git fetch --depth 1 --tags manifest
+          git remote add manifest https://github.com/P-ToyStore/SteamManifestCache_Pro
+          git fetch --depth 1 --tags manifest
       - name: Fetch Manifest Repo Again
         run: |
-          #git fetch --tags manifest -f
+          git fetch --tags manifest -f
       - name: Fetch Repo
         run: |
           git fetch origin -f
