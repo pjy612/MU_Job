@@ -32,7 +32,7 @@ jobs:
         run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Print Git SHA
-        run: echo "Git SHA: ${{ steps.git_sha.outputs.sha }}"
+        run: echo "Git SHA is ${{ steps.git_sha.outputs.sha }}"
         
       - name: Fetch Manifest Repo
         run: |
