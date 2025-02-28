@@ -1,0 +1,79 @@
+name: Update Manifest
+
+on:
+  #schedule:
+  #  - cron: '*/10 * * * *'
+
+  workflow_dispatch:
+
+concurrency:
+  group: download
+  cancel-in-progress: true
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+    steps:
+      - name: Checkout MU repository
+        uses: actions/checkout@v4.2.2
+        with:
+          submodules: recursive
+          repository: pjy612/MU
+          fetch-depth: 0
+          token: ${{ secrets.TOKEN }}
+          
+      - name: Get MU Git SHA
+        run: |
+          echo "MU_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - name: Set Git Author
+        run: |
+          git config --local user.name github-actions[bot]
+          git config --local user.email github-actions[bot]@github.com
+          
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4.3.0
+        with:
+          dotnet-version: 9.x
+          cache: true
+
+      - name: Restore previous build
+        uses: actions/cache@v4
+        id: binaries
+        with:
+          path: |
+            bin/
+            obj/
+          key: ${{ runner.os }}-bin-${{ env.MU_SHA }}
+
+      - name: Build manifest downloader
+        if: steps.binaries.outputs.cache-hit != 'true'
+        run: dotnet build --configuration Release /clp:ErrorsOnly
+
+      - name: Download manifest
+        id: mu
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+        run: dotnet run --no-build --configuration Release /clp:ErrorsOnly
+
+      #- name: Send Update Message
+      #  uses: metalpoch/telegram-alerts-action@v1
+      #  with:
+      #    bot-token-id: "${{ secrets.TG_BOT_TOKEN }}"
+      #    chat-id: ${{ secrets.TG_CHAT_ID }}
+      #    text: "${{ steps.mu.outputs.UPDATEMSG }}"
+      #    #parse-mode: HTML
+      #    #disable-notification: true
+      #    disable-web-page-preview: true  
+      #
+      #  #uses: BorisTestov/tg_sender_action@latest
+      #  #env:
+      #  #  TG_SENDER_TG_CHAT_ID: "${{ secrets.TG_CHAT_ID }}"
+      #  #  TG_SENDER_TG_BOT_TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
+      #  #  TG_SENDER_PAYLOAD_MESSAGE: "${{ steps.mu.outputs.UPDATEMSG }}"
+      #  #  TG_SENDER_PAYLOAD_PARSE_MODE: "HTML"
+
