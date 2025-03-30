@@ -1,8 +1,10 @@
 name: Cleanup Old Workflow Runs
 
 on:
-  schedule:
-    - cron: '0 0/1 * * *'
+  workflow_run:
+    workflows: ["Update Manifest"]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
